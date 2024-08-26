@@ -6,7 +6,9 @@ import example.micronaut.gorm.domain.UserDomain
 class UserModel {
     String name
     String address
-    String phoneNumber
+    Long phoneNumber
+    String email
+    String password
 
     static  UserDomain toUser(UserModel userModel)
     {
@@ -18,6 +20,8 @@ class UserModel {
           userDomain.name=userModel.name
           userDomain.address=userModel.address
          userDomain.phoneNumber=userModel.phoneNumber
+        userDomain.email=userModel.email
+        userDomain.password=userModel.password
 
         return  userDomain
 

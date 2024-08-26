@@ -7,7 +7,9 @@ import grails.gorm.annotation.Entity
 class UserDomain {
     String name
     String address
-    String phoneNumber
+    Long phoneNumber
+    String email
+    String password
 
 
     static  mapping={
@@ -15,9 +17,11 @@ class UserDomain {
         phoneNumber column:"phNum"
     }
     static constraints={
-        name nullable:false
-        address nullable:false
-        phoneNumber nullable:false
+        name blank:false,unique:true
+        address blank:false
+        phoneNumber nullable:false,size:10
+        email blank:false,unique:true
+        password blank:false,unique:true
     }
 
 

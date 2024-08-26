@@ -42,6 +42,6 @@ class BookController {
     @Put("/bup/{id}")
     def bookUpdate(@PathVariable Long id,@Body Book book)
     {
-        return bookService.updateOrCreateBook(id,book)
+        return bookService.updateBook(id,book)
     }
 }

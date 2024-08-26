@@ -5,6 +5,7 @@ import example.micronaut.gorm.domain.BookEntity
 import example.micronaut.gorm.model.AuthorModel
 import example.micronaut.gorm.model.Book
 import grails.gorm.transactions.Transactional
+import org.springframework.dao.DataIntegrityViolationException
 
 import javax.inject.Singleton
 
@@ -34,17 +35,17 @@ class BookService {
 //        }
 //
 //        return "Book saved successfully"
-        BookEntity bookEntity=new BookEntity()
-        bookEntity.title=book.title
-        bookEntity.pubdate=book.pubdate
-        bookEntity.pages=book.pages
-        AuthorModel authorModel=new AuthorModel()
-        authorModel.firstName=book.author.firstName
-        authorModel.lastName=book.author.lastName
-        authorModel.birthDate=book.author.birthDate
-        Author author=AuthorModel.toAuthor(authorModel)
+        BookEntity bookEntity = new BookEntity()
+        bookEntity.title = book.title
+        bookEntity.pubdate = book.pubdate
+        bookEntity.pages = book.pages
+        AuthorModel authorModel = new AuthorModel()
+        authorModel.firstName = book.author.firstName
+        authorModel.lastName = book.author.lastName
+        authorModel.birthDate = book.author.birthDate
+        Author author = AuthorModel.toAuthor(authorModel)
 
-        bookEntity.author= author.save()
+        bookEntity.author = author.save()
         bookEntity.save()
 
         return bookEntity
@@ -69,19 +70,17 @@ class BookService {
 //        }
 //    }
     @Transactional
-    def deleteById(Long id)
-    {
-        BookEntity book=BookEntity.findById(id)
-        if (book)
-        {
+    def deleteById(Long id) {
+        BookEntity book = BookEntity.findById(id)
+        if (book) {
             book.delete()
             return "Successfully Deleted"
-        }
-        else {
+        } else {
             return "Book Not found"
         }
 
     }
+
     @Transactional
     def getAllBooks() {
         List<BookEntity> books = BookEntity.list().collect { book ->
@@ -98,6 +97,7 @@ class BookService {
         }
         return books
     }
+
     @Transactional
     def getBookById(Long id) {
         BookEntity bookEntity = BookEntity.get(id)
@@ -121,60 +121,54 @@ class BookService {
             return "Book Not Found"
         }
     }
-   @Transactional
 
-   def updateOrCreateBook(Long id, Book book) {
-       // Try to retrieve the existing book entity by its ID
-       BookEntity bookEntity = BookEntity.get(id)
+    @Transactional
+    def updateBook(Long id, Book updatedBook) {
+        if (updatedBook == null) {
+            return "Invalid book data provided"
+        }
 
-       if (bookEntity) {
-           // If the book exists, update its fields
-           bookEntity.title = book.title
-           bookEntity.pubdate = book.pubdate
-           bookEntity.pages = book.pages
+        // Find the existing book by ID
+        BookEntity bookEntity = BookEntity.findById(id)
 
-           if (book.author) {
-               AuthorModel authorModel = new AuthorModel()
-               authorModel.firstName = book.author.firstName
-               authorModel.lastName = book.author.lastName
-               authorModel.birthDate = book.author.birthDate
+        if (bookEntity == null) {
+            return "Book not found"
+        }
 
-               Author author = AuthorModel.toAuthor(authorModel)
+        // Check for existing author
+        Author author = null
+        if (updatedBook.author != null) {
+            author = Author.findByFirstNameAndLastName(
+                    updatedBook.author.firstName,
+                    updatedBook.author.lastName
+            )
+            if (author == null) {
+                // Create new author if not found
+                author = new Author(
+                        firstName: updatedBook.author.firstName,
+                        lastName: updatedBook.author.lastName,
+                        birthDate: updatedBook.author.birthDate
+                )
+                author.save()
+            }
+        }
 
-               bookEntity.author = author.save()
-           } else {
-               throw new RuntimeException("Author information is missing")
-           }
+        // Update book details (excluding title)
+        bookEntity.pages = updatedBook.pages
+        bookEntity.pubdate = updatedBook.pubdate
+        bookEntity.author = author
 
-           bookEntity.save()
-           return "Updated Successfully"
-       } else {
-           // If the book doesn't exist, create a new book entity
-           BookEntity newBookEntity = new BookEntity()
-           newBookEntity.title = book.title
-           newBookEntity.pubdate = book.pubdate
-           newBookEntity.pages = book.pages
+        try {
+            // Save the updated book
+            bookEntity.save(flush: true)  // Using flush to immediately persist changes
+        } catch (DataIntegrityViolationException e) {
+            // Handle unique constraint violation
+            return "Error updating book: ${e.message}"
+        }
 
-           if (book.author) {
-               AuthorModel authorModel = new AuthorModel()
-               authorModel.firstName = book.author.firstName
-               authorModel.lastName = book.author.lastName
-               authorModel.birthDate = book.author.birthDate
+        return "Book updated successfully"
 
-               Author author = AuthorModel.toAuthor(authorModel)
-
-               newBookEntity.author = author.save()
-           } else {
-               throw new RuntimeException("Author information is missing")
-           }
-
-           newBookEntity.save()
-           return "Created Successfully"
-       }
-   }
-
-
-
+    }
 }
 
 
