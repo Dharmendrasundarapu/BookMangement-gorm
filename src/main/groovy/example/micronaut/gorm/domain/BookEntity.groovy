@@ -11,7 +11,7 @@ import java.time.LocalDate
 class BookEntity {
     String title
     LocalDate pubdate
-    String pages
+    Long pages
 
      static belongsTo=[author:Author]
 

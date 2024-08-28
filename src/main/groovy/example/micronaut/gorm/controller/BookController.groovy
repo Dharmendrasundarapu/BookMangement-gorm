@@ -44,4 +44,9 @@ class BookController {
     {
         return bookService.updateBook(id,book)
     }
+    @Get("/bookpages/{pages}")
+    def getPages(@PathVariable Long pages)
+    {
+        return bookService.getPages(pages)
+    }
 }

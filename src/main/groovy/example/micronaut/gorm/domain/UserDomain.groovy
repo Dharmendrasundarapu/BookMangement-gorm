@@ -19,7 +19,7 @@ class UserDomain {
     static constraints={
         name blank:false,unique:true
         address blank:false
-        phoneNumber nullable:false,size:10
+        phoneNumber nullable:false
         email blank:false,unique:true
         password blank:false,unique:true
     }

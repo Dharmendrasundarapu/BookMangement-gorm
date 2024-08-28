@@ -9,6 +9,19 @@ class UserModel {
     Long phoneNumber
     String email
     String password
+    static  UserModel fromUserDomain(UserDomain userDomain)
+    {
+        if (userDomain==null)
+        {
+            return  null
+        }
+        return  new UserModel(
+                name: userDomain.name,
+                address: userDomain.address,
+                phoneNumber: userDomain.phoneNumber,
+                email: userDomain.email
+        )
+    }
 
     static  UserDomain toUser(UserModel userModel)
     {

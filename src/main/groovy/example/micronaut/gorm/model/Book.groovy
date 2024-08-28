@@ -8,5 +8,5 @@ class Book {
     String title
     AuthorModel author
     LocalDate pubdate
-    String pages
+    Long pages
 }

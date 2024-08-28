@@ -5,12 +5,17 @@ import example.micronaut.gorm.domain.BookEntity
 import example.micronaut.gorm.model.AuthorModel
 import example.micronaut.gorm.model.Book
 import grails.gorm.transactions.Transactional
+import org.hibernate.SessionFactory
 import org.springframework.dao.DataIntegrityViolationException
 
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class BookService {
+    @Inject
+    SessionFactory sessionFactory
+    def longPages="SELECT * FROM BOOK_ENTITY WHERE PAGES>=:PAGES"
 
     @Transactional
     def saveAuthor(Book book) {
@@ -167,6 +172,15 @@ class BookService {
         }
 
         return "Book updated successfully"
+
+    }
+    @Transactional
+    def getPages(Long pages)
+    {
+        def  session=sessionFactory.getCurrentSession()
+        def morePages=session.createSQLQuery(longPages).setParameter("PAGES",pages).list()
+
+        return morePages
 
     }
 }
