@@ -4,9 +4,11 @@ import example.micronaut.gorm.model.OrderModel
 import example.micronaut.gorm.service.OrderService
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
+import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
+import io.micronaut.http.annotation.Put
 
 import javax.inject.Inject
 import java.time.LocalDate
@@ -36,6 +38,15 @@ class OrderController {
     {
         return orderService.getByUserId(userId)
     }
-
+    @Put("/update/{id}")
+    def orderUpdate(@PathVariable Long id,@Body OrderModel orderModel)
+    {
+        return orderService.updateOrder(id,orderModel)
+    }
+    @Delete("/{id}")
+    def orderDeletion(@PathVariable Long id)
+    {
+        return  orderService.deleteOrder(id)
+    }
 
 }
