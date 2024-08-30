@@ -4,6 +4,7 @@ package example.micronaut.gorm.controller
 import example.micronaut.gorm.domain.UserDomain
 import example.micronaut.gorm.model.UserModel
 import example.micronaut.gorm.service.UserService
+import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
@@ -26,9 +27,23 @@ class UserController {
     @Post
     def saveUser(@Body UserModel userModel)
     {
-        userService.createUser(userModel)
+        try {
+            def user=   userService.createUser(userModel)
+            if(user)
+            {
+                return HttpResponse.created(user)
+            }
+            else {
+                return HttpResponse.badRequest("Failed to add user")
+            }
+        }
+        catch (Exception e)
+        {
+            return HttpResponse.serverError("An error occured ${e.message}")
+        }
 
-        return "Successfully saved"
+
+
     }
     @Get
     def allBooks()

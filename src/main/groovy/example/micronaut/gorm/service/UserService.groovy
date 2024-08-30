@@ -22,7 +22,7 @@ class UserService {
         UserDomain userDomain=userModel.toUser(userModel)
         userDomain.save()
 
-        return  userModel.fromUserDomain(userDomain)
+        return  userDomain
     }
     @Transactional
     def getAllUsers()
