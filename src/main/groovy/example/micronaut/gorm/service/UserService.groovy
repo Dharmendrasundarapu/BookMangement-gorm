@@ -71,7 +71,7 @@ class UserService {
         if(userDomain)
         {
             userDomain.delete()
-            return "Successfully deleted"
+            return true
         }
         else
         {

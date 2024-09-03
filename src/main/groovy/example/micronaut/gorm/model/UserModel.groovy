@@ -4,6 +4,7 @@ package example.micronaut.gorm.model
 import example.micronaut.gorm.domain.UserDomain
 
 class UserModel {
+    Long id
     String name
     String address
     Long phoneNumber
@@ -16,6 +17,7 @@ class UserModel {
             return  null
         }
         return  new UserModel(
+                id:userDomain.id,
                 name: userDomain.name,
                 address: userDomain.address,
                 phoneNumber: userDomain.phoneNumber,

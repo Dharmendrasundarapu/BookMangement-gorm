@@ -109,7 +109,7 @@ class UserController {
         try {
             def user= userService.deleteUser(id)
             if(user){
-                return HttpResponse.ok(user)
+                 HttpResponse.noContent()
             }
             else
           {
