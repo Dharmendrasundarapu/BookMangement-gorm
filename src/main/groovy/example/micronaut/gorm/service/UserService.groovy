@@ -61,7 +61,7 @@ class UserService {
 
         userDomain.save()
 
-        return "User Updated Successfully"
+        return userDomain
 
     }
     @Transactional

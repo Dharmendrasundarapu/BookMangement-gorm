@@ -69,21 +69,72 @@ class UserController {
     @Get("/{id}")
     def specUser(@PathVariable Long id)
     {
-        return  userService.userById(id)
+        try {
+            def user = userService.userById(id)
+            if (user) {
+                return HttpResponse.ok(user)
+            }
+            else
+            {
+                return HttpResponse.badRequest("Failed to add user")
+            }
+        }
+        catch (Exception e)
+        {
+            return HttpResponse.serverError("An error occured ${e.message}")
+        }
     }
     @Put("/{id}")
     def userupdate(@PathVariable Long id,@Body UserModel userModel)
     {
-        return  userService.updateUser(id,userModel)
+        try {
+            def user=  userService.updateUser(id,userModel)
+            if(user)
+            {
+                return HttpResponse.created(user)
+            }
+            else {
+                return HttpResponse.badRequest("Failed to add user")
+            }
+        }
+        catch (Exception e)
+        {
+            return HttpResponse.serverError("An error occured ${e.message}")
+        }
+
     }
     @Delete("/{id}")
     def userdelete(@PathVariable Long id)
     {
-        return userService.deleteUser(id)
-    }
-    @Get("/login")
-    def userDetails(@QueryValue String email, @QueryValue String password)
+        try {
+            def user= userService.deleteUser(id)
+            if(user){
+                return HttpResponse.ok(user)
+            }
+            else
+          {
+            return HttpResponse.badRequest("Failed to add user")
+          }
+        }
+    catch (Exception e)
     {
-        return  userService.getDetails(email,password)
+        return HttpResponse.serverError("An error occured ${e.message}")
+    }
+    }
+    @Post("/login")
+    def userDetails(@Body UserModel userModel)
+    {
+        try {
+            def use = userService.getDetails(userModel.email, userModel.password)
+            if (use) {
+                return HttpResponse.ok(use)
+            } else {
+                return HttpResponse.badRequest("Failed to send")
+            }
+        }
+        catch (Exception e)
+        {
+            return HttpResponse.serverError("An error occured ${e.message}")
+        }
     }
 }
